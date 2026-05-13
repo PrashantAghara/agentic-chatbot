@@ -1,5 +1,6 @@
 import streamlit as st
 from src.agentai.ui.streamlit.load_ui import LoadStreamlitUI
+from src.agentai.llms.llm import LLM
 
 
 def load_app():
@@ -20,7 +21,7 @@ def load_app():
 
     # if user_message:
     #     try:
-    #         obj_llm_config = LLM(user_controls_input=user_input)
+    #         obj_llm_config = LLM(user_controls_input=user_input).get_llm()
     #         model = obj_llm_config.get_llm_model()
 
     #         if not model:
