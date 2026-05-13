@@ -1,5 +1,5 @@
-from llms.groq import GroqLLM
-from llms.huggingface import HuggingFaceLLM
+from src.agentai.llms.groq import GroqLLM
+from src.agentai.llms.huggingface import HuggingFaceLLM
 
 
 class LLM:

@@ -1,6 +1,8 @@
 import streamlit as st
 from src.agentai.ui.streamlit.load_ui import LoadStreamlitUI
 from src.agentai.llms.llm import LLM
+from src.agentai.graph.builder import GraphBuilder
+from src.agentai.ui.streamlit.display_result import DisplayResultStreamlit
 
 
 def load_app():
@@ -19,16 +21,23 @@ def load_app():
 
     user_message = st.chat_input("Enter your message: ")
 
-    # if user_message:
-    #     try:
-    #         obj_llm_config = LLM(user_controls_input=user_input).get_llm()
-    #         model = obj_llm_config.get_llm_model()
+    if user_message:
+        try:
+            obj_llm_config = LLM(user_controls_input=user_input).get_llm()
+            model = obj_llm_config.get_llm_model()
 
-    #         if not model:
-    #             st.error("Error: LLM Model could not be initialized")
-    #             return
+            if not model:
+                st.error("Error: LLM Model could not be initialized")
+                return
 
-    #         usecase = user_input.get("selected_usecase")
-    #         if not usecase:
-    #             st.error("Error: No use case selected")
-    #             return
+            usecase = user_input.get("selected_usecase")
+            if not usecase:
+                st.error("Error: No use case selected")
+                return
+
+            graph_builder = GraphBuilder(model=model)
+            graph = graph_builder.setup_graph(usecase)
+            DisplayResultStreamlit(usecase, graph, user_message).display_result_on_ui()
+        except Exception as e:
+            st.error(f"Error: Graph setup failed - {e}")
+            return
