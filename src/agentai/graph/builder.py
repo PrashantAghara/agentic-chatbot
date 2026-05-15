@@ -4,6 +4,7 @@ from src.agentai.nodes.basic_chatbot_node import BasicChatbotNode
 from src.agentai.tools.search_tool import create_tool_node, get_tools
 from langgraph.prebuilt import tools_condition
 from src.agentai.nodes.chatbot_with_tool_node import ChatbotToolNode
+from src.agentai.nodes.ai_news_node import AINewsNode
 
 
 class GraphBuilder:
@@ -36,6 +37,20 @@ class GraphBuilder:
         self.graph_builder.add_conditional_edges("chatbot", tools_condition)
         self.graph_builder.add_edge("tools", "chatbot")
 
+    def ai_news_builder(self):
+        """
+        Builds a AI News with Tavily Web search & summerizers.
+        """
+        node = AINewsNode(llm=self.llm)
+        self.graph_builder.add_node("fetch_news", node.fetch_news)
+        self.graph_builder.add_node("summarize", node.summarize)
+        self.graph_builder.add_node("writer", node.save_results)
+
+        self.graph_builder.set_entry_point("fetch_news")
+        self.graph_builder.add_edge("fetch_news", "summarize")
+        self.graph_builder.add_edge("summarize", "writer")
+        self.graph_builder.add_edge("writer", END)
+
     def setup_graph(self, usecase):
         """
         Setup the graph based on usecase
@@ -43,6 +58,8 @@ class GraphBuilder:
         if usecase == "Basic Chatbot":
             self.build_basic_chatbot()
         if usecase == "Chatbot with Web":
+            self.build_chatbot_with_web()
+        if usecase == "AI News":
             self.build_chatbot_with_web()
 
         return self.graph_builder.compile()
