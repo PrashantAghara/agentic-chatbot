@@ -1,4 +1,3 @@
-import os
 from tavily import TavilyClient
 from langchain_core.prompts import ChatPromptTemplate
 
